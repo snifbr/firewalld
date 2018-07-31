@@ -127,7 +127,11 @@ _firewall_offline_cmd()
 {
     local cur prev words cword split
     _init_completion -s || return
-    firewall-cmd --state 1> /dev/null && return
+    firewall-cmd --state &> /dev/null
+    if [[ "${?}" -eq 0 ]]; then
+        echo -e "\nfirewalld is running, please use firewall-cmd."
+        return
+    fi
 
     case $prev in
         --*-entries-from-file|--new-*-from-file)
@@ -147,11 +151,7 @@ _firewall_offline_cmd()
         --new-*)
             ;;
         --zone|--set-default-zone|--info-zone|--path-zone)
-            if [[ ${words[@]} == *--permanent* ]]; then
-                COMPREPLY=( $( compgen -W '`firewall-offline-cmd --permanent --get-zones`' -- "$cur" ) )
-            else
-                COMPREPLY=( $( compgen -W '`firewall-offline-cmd --get-zones`' -- "$cur" ) )
-            fi
+            COMPREPLY=( $( compgen -W '`firewall-offline-cmd --get-zones`' -- "$cur" ) )
             ;;
         --zone=*)
             COMPREPLY=( $( compgen -W "${OPTIONS_ZONE}" -- "$cur" ) )
@@ -160,44 +160,19 @@ _firewall_offline_cmd()
             COMPREPLY=( $( compgen -W "${OPTIONS_IPSET}" -- "$cur" ) )
             ;;
         --*-ipset)
-            if [[ ${words[@]} == *--permanent* ]]; then
-                COMPREPLY=( $( compgen -W '`firewall-offline-cmd --permanent --get-ipsets`' -- "$cur" ) )
-            else
-                COMPREPLY=( $( compgen -W '`firewall-offline-cmd --get-ipsets`' -- "$cur" ) )
-            fi
+            COMPREPLY=( $( compgen -W '`firewall-offline-cmd --get-ipsets`' -- "$cur" ) )
             ;;
         --*-service)
-            echo ""
-            echo "### --*-service) ###"
-            echo "cur: ${cur}"
-            echo "prev: ${prev}"
-            echo "words: ${words[@]}"
-            echo "cword: ${cword}"
-            echo "split: ${split}"
-            echo "### --*-service) ###"
-            echo ""
-            if [[ ${words[@]} == *--permanent* ]]; then
-                COMPREPLY=( $( compgen -W '`firewall-offline-cmd --permanent --get-services`' -- "$cur" ) )
-            else
-                COMPREPLY=( $( compgen -W '`firewall-offline-cmd --get-services`' -- "$cur" ) )
-            fi
+            COMPREPLY=( $( compgen -W '`firewall-offline-cmd --get-services`' -- "$cur" ) )
             ;;
         --helper|--info-helper|--path-helper)
-            if [[ ${words[@]} == *--permanent* ]]; then
-                COMPREPLY=( $( compgen -W '`firewall-offline-cmd --permanent --get-helpers`' -- "$cur" ) )
-            else
-                COMPREPLY=( $( compgen -W '`firewall-offline-cmd --get-helpers`' -- "$cur" ) )
-            fi
+            COMPREPLY=( $( compgen -W '`firewall-offline-cmd --get-helpers`' -- "$cur" ) )
             ;;
         --helper=*)
             COMPREPLY=( $( compgen -W "${OPTIONS_HELPER}" -- "$cur" ) )
             ;;
         --*-icmp-block|--info-icmptype|--path-icmptype)
-            if [[ ${words[@]} == *--permanent* ]]; then
-                COMPREPLY=( $( compgen -W '`firewall-offline-cmd --permanent --get-icmptypes`' -- "$cur" ) )
-            else
-                COMPREPLY=( $( compgen -W '`firewall-offline-cmd --get-icmptypes`' -- "$cur" ) )
-            fi
+            COMPREPLY=( $( compgen -W '`firewall-offline-cmd --get-icmptypes`' -- "$cur" ) )
             ;;
         --list-services|--add-service=*|--remove-service=*|--query-service=*|\
         --list-ports|--add-port=*|--remove-port=*|--query-port=*|\
@@ -214,51 +189,28 @@ _firewall_offline_cmd()
             if [[ ( ${prev} == --add-* ) || ( ${prev} == --remove-* ) ]]; then
                 [[ ${prev} == *=* ]] && opts="${prev%=*}=" || opts="${prev}"
             fi
-            if [[ ! ${words[@]} == *--permanent* ]]; then
-                opts="${opts} --permanent"
-                [[ ${prev} == --add-* ]] && opts="${opts} --timeout="
-            fi
             [[ ! ${words[@]} == *--zone=* ]] && opts="${opts} --zone="
             if [ -n "${opts}" ]; then
                 COMPREPLY=( $( compgen -W "${opts}" -- "$cur" ) )
             fi
-
             ;;
         --*-interface|--change-zone)
             _available_interfaces
             ;;
-        --permanent)
-            [[ ${words[@]} == *--direct* ]] && opts="${OPTIONS_DIRECT}" || opts="${OPTIONS_PERMANENT} --direct"
-            COMPREPLY=( $( compgen -W "${opts}" -- "$cur" ) )
-            ;;
         --direct)
-            [[ ${words[@]} == *--permanent* ]] && opts="${OPTIONS_DIRECT}" || opts="${OPTIONS_DIRECT} --permanent"
-            COMPREPLY=( $( compgen -W "${opts}" -- "$cur" ) )
+            COMPREPLY=( $( compgen -W "${OPTIONS_DIRECT}" -- "$cur" ) )
             ;;
         --*-rich-rule)
             # to not be matched with --*-rule below
             return 0
             ;;
-        --passthrough|--*-chain|--get-chains|--*-rule|--get-rules|--remove-rules)
+        --*-chain|--get-chains|--*-rule|--get-rules|--remove-rules)
             COMPREPLY=( $( compgen -W 'ipv4 ipv6 eb' -- "$cur" ) )
             ;;
         ipv4|ipv6|eb)
-            if [[ ${words[@]} == *--passthrough* ]]; then
-                return 0
-            else
-                COMPREPLY=( $( compgen -W 'nat filter mangle' -- "$cur" ) )
-            fi
+            COMPREPLY=( $( compgen -W 'nat filter mangle' -- "$cur" ) )
             ;;
         *)
-            echo ""
-            echo "### *) ###"
-            echo "cur: ${cur}"
-            echo "prev: ${prev}"
-            echo "words: ${words[@]}"
-            echo "cword: ${cword}"
-            echo "split: ${split}"
-            echo "### *) ###"
-            echo ""
             if [[ "$cur" == -* ]]; then
                 if [[ ${words[@]} == *--new-ipset* ]]; then
                     COMPREPLY=( $( compgen -W "${OPTIONS_NEW_IPSET}" -- "$cur") )
