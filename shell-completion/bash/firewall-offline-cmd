@@ -102,11 +102,6 @@ _firewall_offline_cmd()
 {
     local cur prev words cword split
     _init_completion -s || return
-    firewall-cmd --state &> /dev/null
-    if [[ "${?}" -eq 0 ]]; then
-        echo -e "\nfirewalld is running, please use firewall-cmd."
-        return
-    fi
 
     case $prev in
         --*-entries-from-file|--new-*-from-file)
