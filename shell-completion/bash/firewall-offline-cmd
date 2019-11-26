@@ -17,10 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-
-# TODO: find a way how to get the following options from firewall-offline-cmd
-
-## Revisado todas as opções --DFR-- 30-07-2018
 OPTIONS_LOCKDOWN="--add-lockdown-whitelist-command= --remove-lockdown-whitelist-command= \
        --query-lockdown-whitelist-command= --list-lockdown-whitelist-commands \
        --add-lockdown-whitelist-context= --remove-lockdown-whitelist-context= \
@@ -30,20 +26,17 @@ OPTIONS_LOCKDOWN="--add-lockdown-whitelist-command= --remove-lockdown-whitelist-
        --add-lockdown-whitelist-user= --remove-lockdown-whitelist-user= \
        --query-lockdown-whitelist-user= --list-lockdown-whitelist-users"
 
-## Revisado todas as opções --DFR-- 30-07-2018
 OPTIONS_CONFIG="--get-zones --get-services --get-icmptypes --get-helpers \
                 ${OPTIONS_LOCKDOWN} --list-all-zones \
                 --info-zone= --info-service= --info-icmptype= \
 		            --info-ipset= --info-helper="
 
-## Revisado todas as opções --DFR-- 30-07-2018
 OPTIONS_ZONE_INTERFACES_SOURCES="\
             --add-interface= --remove-interface= --query-interface= \
             --list-interfaces --change-interface= --change-zone= \
             --add-source= --remove-source= --query-source= \
             --change-source= --list-sources"
 
-## Revisado todas as opções --DFR-- 30-07-2018
 OPTIONS_ZONE_ACTION_ACTION="--add-service= --remove-service= --query-service= \
                        --add-port= --remove-port= --query-port= \
                        --add-source-port= --remove-source-port= --query-source-port= \
@@ -51,8 +44,6 @@ OPTIONS_ZONE_ACTION_ACTION="--add-service= --remove-service= --query-service= \
                        --add-icmp-block= --remove-icmp-block= --query-icmp-block= \
                        --add-forward-port= --remove-forward-port= --query-forward-port="
 
-## Revisado todas as opções --DFR-- 30-07-2018
-## OBS: icmp-block-inversion only in the new release 0.6.0.0
 OPTIONS_ZONE_ADAPT_QUERY="--add-rich-rule= --remove-rich-rule= --query-rich-rule= \
                     --add-icmp-block-inversion --remove-icmp-block-inversion \
                     --query-icmp-block-inversion \
@@ -61,28 +52,20 @@ OPTIONS_ZONE_ADAPT_QUERY="--add-rich-rule= --remove-rich-rule= --query-rich-rule
                     --list-source-ports --list-icmp-blocks \
                     --list-forward-ports --list-rich-rules --list-all"
 
-## Revisado todas as opções --DFR-- 30-07-2018
 OPTIONS_ZONE_PERMANENT_ONLY="--get-description --get-short \
                              --set-description= --set-short="
 
-## Revisado todas as opções --DFR-- 30-07-2018
 OPTIONS_IPSET_ACTION_ACTION="--add-entry= --remove-entry= --query-entry= \
                              --add-entries-from-file= --remove-entries-from-file"
 
-## Revisado todas as opções --DFR-- 30-07-2018
-## OBS: icmp-block-inversion only in the new release 0.6.0.0
 OPTIONS_IPSET_ADAPT_QUERY="--list-entries"
 
-## Revisado todas as opções --DFR-- 30-07-2018
-# can be used with/without preceding --zone=<zone>
 OPTIONS_ZONE="${OPTIONS_ZONE_INTERFACES_SOURCES} \
               ${OPTIONS_ZONE_ACTION_ACTION} ${OPTIONS_ZONE_ADAPT_QUERY} \
               ${OPTIONS_ZONE_PERMANENT_ONLY}"
 
-## Revisado todas as opções --DFR-- 30-07-2018
 OPTIONS_IPSET="${OPTIONS_IPSETACTION_ACTION} ${OPTIONS_IPSET_ADAPT_QUERY}"
 
-## Revisado todas as opções --DFR-- 30-07-2018
 OPTIONS_PERMANENT_ONLY="--new-icmptype= --new-icmptype-from-file= --delete-icmptype= \
                         --new-service= --new-service-from-file= --delete-service= \
                         --new-zone= --new-zone-from-file= --delete-zone= \
@@ -92,28 +75,20 @@ OPTIONS_PERMANENT_ONLY="--new-icmptype= --new-icmptype-from-file= --delete-icmpt
                         --path-zone= --path-service= --path-icmptype= \
                         --path-ipset= --path-helper="
 
-## Revisado todas as opções --DFR-- 30-07-2018
 OPTIONS_NEW_IPSET="--type= --option="
 
-## Revisado todas as opções --DFR-- 30-07-2018
 OPTIONS_NEW_HELPER="--module= --family="
 
-## Revisado todas as opções --DFR-- 30-07-2018
 OPTIONS_HELPER=""
 
-## Revisado todas as opções --DFR-- 30-07-2018
-# can be used after --permanent
 OPTIONS_PERMANENT="${OPTIONS_CONFIG} --zone= ${OPTIONS_ZONE} \
                    ${OPTIONS_PERMANENT_ONLY}"
 
-## Revisado todas as opções --DFR-- 30-07-2018
 OPTIONS_DIRECT=" --add-chain --remove-chain --query-chain --get-chains --get-all-chains \
          --add-rule --remove-rule  --remove-rules --query-rule  --get-rules  --get-all-rules \
          --add-passthrough --remove-passthrough \
          --query-passthrough --get-passthroughs --get-all-passthroughs"
 
-## Revisado todas as opções --DFR-- 30-07-2018
-# these all can be used as a "first" option
 OPTIONS_GENERAL="--help --version \
                  --get-log-denied --set-log-denied= \
                  --lockdown-on --lockdown-off --query-lockdown \
@@ -221,7 +196,6 @@ _firewall_offline_cmd()
             ;;
     esac
 
-    # do not append a space to words that end with =
     [[ $COMPREPLY == *= ]] && compopt -o nospace
 
 } &&
